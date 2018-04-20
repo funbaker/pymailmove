@@ -8,6 +8,8 @@ from email.utils import parsedate
 from .message import Message
 from . import helpers
 
+__all__ = ['MboxStorage']
+
 conv_to = {
     '\Seen': 'R',
     '\Answered': 'A',
@@ -17,11 +19,11 @@ conv_to = {
 conv_from = {value: key for key, value in conv_to.items()}
 
 
-def convert_flags_to(flags):
+def _convert_flags_to(flags):
     return ''.join(conv_to[flag] for flag in flags if flag in conv_to)
 
 
-def convert_flags_from(flags):
+def _convert_flags_from(flags):
     flags = set(flags)
     flags = (conv_from[flag] for flag in flags if flag in conv_from)
     flags = tuple(flags)
@@ -49,7 +51,7 @@ class MboxStorage:
                 message = Message(
                     bytes(message),
                     parsedate(helpers.ensure_string(message.get('Date'))),
-                    convert_flags_from(message.get_flags())
+                    _convert_flags_from(message.get_flags())
                 )
                 yield message
         except Exception:
@@ -59,7 +61,7 @@ class MboxStorage:
             ori.flush()
             ori.unlock()
 
-    def append_messages(self, messages, mailbox=None):
+    def append_messages(self, messages):
         mailbox = None  # noqa: F841: there is no spoon
 
         dest = self._mbox
@@ -72,7 +74,7 @@ class MboxStorage:
                 assert isinstance(message, Message)
 
                 mboxmsg = mboxMessage(message.raw)
-                mboxmsg.set_flags(convert_flags_to(message.flags))
+                mboxmsg.set_flags(_convert_flags_to(message.flags))
                 mboxmsg.set_from(
                     helpers.ensure_string(message.parsed.get('From').encode()),
                     message.date

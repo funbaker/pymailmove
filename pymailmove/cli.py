@@ -24,7 +24,7 @@ def main(context):
 
 @main.command(name='from-imap')
 @click.option('--host')
-@click.option('--port')
+@click.option('--port', default=None)
 @click.option('--username', prompt=True)
 @click.option('--password', prompt=True, hide_input=True)
 @click.option('--ssl/--no-ssl', is_flag=True, default=True)

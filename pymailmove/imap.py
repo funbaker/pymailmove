@@ -7,6 +7,8 @@ import imaplib
 from .message import Message
 from . import helpers
 
+__all__ = ['IMAPServer']
+
 logger = logging.getLogger(__name__)
 
 
