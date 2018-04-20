@@ -25,7 +25,9 @@ setup(
     url='https://github.com/funbaker/pymailmove',
     license=license,
     packages=find_packages(exclude=('tests', 'docs')),
-    install_required=['click'],
+    install_requires=['click'],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'pymailmove = pymailmove.cli:main'
